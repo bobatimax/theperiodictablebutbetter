@@ -3,63 +3,110 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Periodic Table but Better | By Revan Praveen</title>
-<meta name="description" content="The Periodic Table but Better — created by Revan Praveen.">
+<title>The Periodic Table but Better — Virtual Lab</title>
 <style>
-  :root{--bg:#f7f6f2;--card:#fff;--ink:#1d1b26;--soft:#6b6878;--line:#e6e3dc;--accent:#4f46a8}
-  @media(prefers-color-scheme:dark){:root{--bg:#121117;--card:#1c1b23;--ink:#f3f1f8;--soft:#a5a2b3;--line:#2c2a35;--accent:#a99ef5}}
-  *{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.55 system-ui,sans-serif}
-  main{max-width:760px;margin:0 auto;padding:28px 16px 64px}
-  a{color:var(--accent)}nav.crumbs{font-size:14px;color:var(--soft);margin-bottom:18px}
-  header.hero{display:flex;gap:18px;align-items:center;margin-bottom:12px}
-  .tile{width:96px;height:96px;border-radius:22px;background:var(--card);border:1px solid var(--line);display:flex;align-items:center;justify-content:center;font-size:40px}
-  h1{font-size:32px;line-height:1.15;margin:0}
-  .creator{color:var(--soft);margin:6px 0 0}
-  h2{font-size:20px;margin:28px 0 10px}
-  p.lede{color:var(--soft);margin:6px 0 0}
-  .cta{display:inline-block;margin:18px 0 6px;padding:12px 18px;border-radius:999px;background:var(--ink);color:var(--bg);text-decoration:none;font-weight:600}
-  ul{padding-left:20px}
-  footer{margin-top:40px;color:var(--soft);font-size:14px;display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
-  .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;padding:0;list-style:none}
-  .grid a{display:block;padding:10px 12px;background:var(--card);border:1px solid var(--line);border-radius:12px;text-decoration:none;color:var(--ink)}
-  .grid a:hover{border-color:var(--accent)}
+  :root { --bg:#0b0c10; --panel:rgba(20,22,32,.75); --text:#f0f2f8; --muted:#9aa0b8; --accent:#7c6cff; }
+  * { box-sizing:border-box; }
+  body { margin:0; height:100vh; background:radial-gradient(circle at 30% 20%,#1a1d2e,#0b0c10); color:var(--text); font-family:system-ui,sans-serif; overflow:hidden; }
+  header { position:absolute; top:16px; left:16px; z-index:10; pointer-events:none; }
+  header h1 { margin:0; font-size:1.4rem; background:linear-gradient(90deg,#fff,#5ce1e6); -webkit-background-clip:text; background-clip:text; color:transparent; }
+  header p { margin:2px 0 0; font-size:.8rem; color:var(--muted); }
+  canvas { width:100%; height:100%; display:block; cursor:grab; }
+  canvas:active { cursor:grabbing; }
+  .panel { position:absolute; background:var(--panel); backdrop-filter:blur(16px); border:1px solid rgba(255,255,255,.08); border-radius:18px; padding:14px 16px; box-shadow:0 10px 40px rgba(0,0,0,.45); z-index:5; }
+  .controls { bottom:20px; left:20px; width:260px; }
+  .info { top:70px; right:20px; font-size:.85rem; color:var(--muted); width:180px; }
+  .info strong { color:var(--text); }
+  label { display:block; font-size:.75rem; color:var(--muted); margin:10px 0 4px; text-transform:uppercase; }
+  input[type=range] { width:100%; accent-color:var(--accent); }
+  .row { display:flex; gap:8px; margin-top:8px; }
+  button, select { background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.08); color:var(--text); border-radius:10px; padding:8px 12px; cursor:pointer; flex:1; }
+  button:hover { background:rgba(255,255,255,.12); }
+  .btn-primary { background:linear-gradient(135deg,#7c6cff,#5b4ee0); border:none; font-weight:600; }
 </style>
 </head>
 <body>
-<main>
-  <nav class="crumbs">Home › The Periodic Table but Better</nav>
-  <header class="hero">
-    <div class="tile">🧪</div>
-    <div>
-      <h1>The Periodic Table but Better</h1>
-      <p class="creator">Made by <strong>Revan Praveen</strong></p>
-    </div>
-  </header>
-  <p class="lede">An interactive chemistry experience: tilt a beaker and watch liquid particles flow and spill naturally.</p>
-  <a class="cta" href="#">Open Virtual Lab</a>
-  <p class="lede">Free in any browser.</p>
-  <section>
-    <h2>What it does</h2>
-    <ul>
-      <li>Liquid particles that flow and spill as the beaker tilts</li>
-      <li>Clean, student-friendly interactive tools</li>
-    </ul>
-  </section>
-  <section>
-    <h2>More chemistry tools</h2>
-    <ul class="grid">
-      <li><a href="#">Equation Balancer</a></li>
-      <li><a href="#">Molar Mass Calculator</a></li>
-      <li><a href="#">Solubility Table</a></li>
-      <li><a href="#">Orbital Atlas</a></li>
-      <li><a href="#">Molecular Shapes</a></li>
-      <li><a href="#">Flame Studio</a></li>
-    </ul>
-  </section>
-  <footer>
-    <span>&copy; 2026 The Periodic Table but Better</span>
-    <span>Made by Revan Praveen</span>
-  </footer>
-</main>
+<header>
+  <h1>The Periodic Table but Better</h1>
+  <p>Virtual Lab · Made by Revan Praveen</p>
+</header>
+<canvas id="c"></canvas>
+<div class="panel controls">
+  <label>Tilt <span id="angle-val">0°</span></label>
+  <input type="range" id="tilt" min="-70" max="70" value="0">
+  <label>Fill <span id="fill-val">60%</span></label>
+  <input type="range" id="fill" min="10" max="90" value="60">
+  <label>Liquid</label>
+  <select id="liquid">
+    <option value="#3b82f6">Water</option>
+    <option value="#22d3ee">Copper Sulfate</option>
+    <option value="#ef4444">Acid</option>
+    <option value="#f59e0b">Sodium</option>
+    <option value="#a78bfa">KMnO₄</option>
+  </select>
+  <div class="row">
+    <button id="reset" class="btn-primary">Reset</button>
+    <button id="spill">Spill</button>
+  </div>
+</div>
+<div class="panel info">
+  <div>Particles: <strong id="pcount">0</strong></div>
+  <div>Spilled: <strong id="spilled">0</strong></div>
+  <div>Tilt: <strong id="tilt-display">0°</strong></div>
+  <div style="margin-top:8px;font-size:.75rem">Drag the beaker or use the slider</div>
+</div>
+<script>
+const canvas = document.getElementById('c'), ctx = canvas.getContext('2d');
+let W, H, dpr, particles = [], tilt = 0, fill = 60, color = '#3b82f6', spilled = 0;
+const MAX = 1200;
+function resize(){ dpr = Math.min(devicePixelRatio||1,2); W=canvas.clientWidth; H=canvas.clientHeight; canvas.width=W*dpr; canvas.height=H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); }
+window.onresize = resize; resize();
+function makeParticles(){
+  particles = []; spilled = 0;
+  const n = Math.floor(MAX * fill/100);
+  for(let i=0;i<n;i++) particles.push({x:(Math.random()-.5)*140, y:(Math.random()-.5)*160-20, vx:(Math.random()-.5)*.4, vy:(Math.random()-.5)*.4, r:2+Math.random()*1.5});
+}
+function step(){
+  const g = 0.22, rad = tilt*Math.PI/180, gx = Math.sin(rad)*g, gy = Math.cos(rad)*g;
+  const left=-75, right=75, bottom=110, top=-110;
+  for(let i=particles.length-1;i>=0;i--){
+    let p = particles[i];
+    p.vx += gx; p.vy += gy; p.vx*=.985; p.vy*=.985; p.x+=p.vx; p.y+=p.vy;
+    if(p.x<left+p.r){p.x=left+p.r; p.vx*=-.6;}
+    if(p.x>right-p.r){p.x=right-p.r; p.vx*=-.6;}
+    if(p.y>bottom-p.r){p.y=bottom-p.r; p.vy*=-.4;}
+    if(Math.abs(tilt)>28 && p.y < top+15 && Math.abs(p.x-(tilt>0?right:left))<45){ particles.splice(i,1); spilled++; }
+  }
+}
+function draw(){
+  ctx.fillStyle='#0b0c10'; ctx.fillRect(0,0,W,H);
+  ctx.save(); ctx.translate(W*.5, H*.52); ctx.rotate(tilt*Math.PI/180);
+  ctx.strokeStyle='rgba(180,210,240,.4)'; ctx.lineWidth=12;
+  ctx.beginPath(); ctx.roundRect(-90,-140,180,280,[8,8,28,28]); ctx.stroke();
+  ctx.globalCompositeOperation='lighter';
+  for(const p of particles){ ctx.fillStyle=color+'bb'; ctx.beginPath(); ctx.arc(p.x,p.y,p.r,0,Math.PI*2); ctx.fill(); }
+  ctx.globalCompositeOperation='source-over';
+  ctx.restore();
+  if(spilled){ ctx.fillStyle=color+'66'; for(let i=0;i<Math.min(spilled/6,30);i++){ ctx.beginPath(); ctx.ellipse(W*.5+(tilt>0?100:-100)+(i%5)*8, H*.7+i*2, 5,3,0,0,Math.PI*2); ctx.fill(); } }
+}
+let dragging=false, lastX=0;
+canvas.onpointerdown=e=>{dragging=true; lastX=e.clientX; canvas.setPointerCapture(e.pointerId);};
+canvas.onpointermove=e=>{ if(!dragging)return; tilt=Math.max(-70,Math.min(70,tilt+(e.clientX-lastX)*.35)); lastX=e.clientX; document.getElementById('tilt').value=tilt; update(); };
+canvas.onpointerup=()=>dragging=false;
+function update(){
+  document.getElementById('angle-val').textContent=Math.round(tilt)+'°';
+  document.getElementById('tilt-display').textContent=Math.round(tilt)+'°';
+  document.getElementById('fill-val').textContent=fill+'%';
+  document.getElementById('pcount').textContent=particles.length;
+  document.getElementById('spilled').textContent=spilled;
+}
+document.getElementById('tilt').oninput=e=>{tilt=+e.target.value; update();};
+document.getElementById('fill').oninput=e=>{fill=+e.target.value; makeParticles(); update();};
+document.getElementById('liquid').onchange=e=>color=e.target.value;
+document.getElementById('reset').onclick=()=>{tilt=0; document.getElementById('tilt').value=0; makeParticles(); update();};
+document.getElementById('spill').onclick=()=>{tilt=tilt>=0?55:-55; document.getElementById('tilt').value=tilt; update();};
+function loop(){ step(); draw(); requestAnimationFrame(loop); }
+makeParticles(); update(); loop();
+</script>
 </body>
 </html>
